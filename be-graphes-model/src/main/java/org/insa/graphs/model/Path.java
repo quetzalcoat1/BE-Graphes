@@ -30,7 +30,34 @@ public class Path {
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+
+        for (int i = 0; i < nodes.size() - 1; i++) {
+            Node node = nodes.get(i);
+            Node nextNode = nodes.get(i + 1);
+
+            if(!node.hasSuccessors()) {
+                throw new IllegalArgumentException("Cannot create path where a node has no successor.");
+            }
+            
+            //La liste des successeurs de node est non vide, on initialise fastest_arc avec le premier arc
+            Arc fastest_arc = node.getSuccessors().get(0);
+            
+            for (Arc successor : node.getSuccessors()) {
+
+                if (successor.getDestination().equals(nextNode)) {
+                    if (successor.getMinimumTravelTime() < fastest_arc.getMinimumTravelTime()) {
+                        fastest_arc = successor;
+                    }
+                }
+            }
+            
+            if (fastest_arc == null) {
+                throw new IllegalArgumentException("Cannot create path where two consecutive nodes are not connected.");
+            }
+
+            arcs.add(fastest_arc);
+        }
+
         return new Path(graph, arcs);
     }
 
@@ -220,7 +247,6 @@ public class Path {
      * Compute the length of this path (in meters).
      *
      * @return Total length of the path (in meters).
-     * @deprecated Need to be implemented.
      */
     public float getLength() {
 

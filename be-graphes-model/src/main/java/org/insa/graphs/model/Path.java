@@ -184,13 +184,38 @@ public class Path {
      * </ul>
      *
      * @return true if the path is valid, false otherwise.
-     * @deprecated Need to be implemented.
      */
+    
     public boolean isValid() {
-        // TODO:
-        return false;
-    }
 
+        // verifier le path est valide    // path est defini par des arcs
+        // cas 1 : chemin vide → valide
+        if (this.isEmpty()) {
+            return true;
+        }
+
+        // cas 2 : un seul noeud (0 arc) → valide
+        if (this.arcs.isEmpty()) {
+            return true;
+        }
+
+        // vérifier que le premier arc commence bien au bon endroit
+        if (!this.arcs.get(0).getOrigin().equals(this.origin)) {
+            return false;
+        }
+
+        // vérifier la continuité des arcs
+        for (int i = 0; i < this.arcs.size() - 1; i++) {
+            Arc current = this.arcs.get(i);
+            Arc next = this.arcs.get(i + 1);
+
+            if (!current.getDestination().equals(next.getOrigin())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
     /**
      * Compute the length of this path (in meters).
      *
@@ -212,15 +237,13 @@ public class Path {
      * @param speed Speed to compute the travel time.
      * @return Time (in seconds) required to travel this path at the given speed (in
      *         kilometers-per-hour).
-     * @deprecated Need to be implemented.
      */
     public double getTravelTime(double speed) {
-
-        double time = 0;
+        double total = 0;
         for (Arc arc : this.arcs) {
-            time += arc.getTravelTime(speed);
+            total += arc.getTravelTime(speed);
         }
-        return time;
+        return total;
     }
 
     /**
@@ -228,15 +251,13 @@ public class Path {
      * every arc.
      *
      * @return Minimum travel time to travel this path (in seconds).
-     * @deprecated Need to be implemented.
      */
     public double getMinimumTravelTime() {
-
-        double time = 0;
+        double total = 0;
         for (Arc arc : this.arcs) {
-            time += arc.getMinimumTravelTime();
+            total += arc.getMinimumTravelTime();
         }
-        return time;
+        return total;
     }
 
 }

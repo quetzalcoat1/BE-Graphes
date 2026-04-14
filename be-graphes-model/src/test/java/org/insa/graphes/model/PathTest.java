@@ -110,7 +110,7 @@ public class PathTest {
         assertEquals(10, longLoopPath.size());
     }
 
-    @SuppressWarnings("deprecation")
+    //@SuppressWarnings("deprecation")
     @Test
     public void testIsValid() {
         assertTrue(emptyPath.isValid());
@@ -123,7 +123,7 @@ public class PathTest {
         assertFalse(invalidPath.isValid());
     }
 
-    @SuppressWarnings("deprecation")
+    //@SuppressWarnings("deprecation")
     @Test
     public void testGetLength() {
         assertEquals(0, emptyPath.getLength(), 1e-6);
@@ -134,7 +134,7 @@ public class PathTest {
         assertEquals(120, longLoopPath.getLength(), 1e-6);
     }
 
-    @SuppressWarnings("deprecation")
+    //@SuppressWarnings("deprecation")
     @Test
     public void testGetTravelTime() {
         // Note: 18 km/h = 5m/s
@@ -154,7 +154,7 @@ public class PathTest {
         assertEquals(15, longLoopPath.getTravelTime(28.8), 1e-6);
     }
 
-    @SuppressWarnings("deprecation")
+    //@SuppressWarnings("deprecation")
     @Test
     public void testGetMinimumTravelTime() {
         assertEquals(0, emptyPath.getMinimumTravelTime(), 1e-4);
@@ -165,7 +165,7 @@ public class PathTest {
         assertEquals(11.25, longLoopPath.getMinimumTravelTime(), 1e-4);
     }
 
-    @SuppressWarnings("deprecation")
+    //@SuppressWarnings("deprecation")
     @Test
     public void testCreateFastestPathFromNodes() {
         Path path;
@@ -202,7 +202,7 @@ public class PathTest {
         assertTrue(path.isEmpty());
     }
 
-    @SuppressWarnings("deprecation")
+    //@SuppressWarnings("deprecation")
     @Test
     public void testCreateShortestPathFromNodes() {
         Path path;
@@ -239,14 +239,14 @@ public class PathTest {
         assertTrue(path.isEmpty());
     }
 
-    @SuppressWarnings("deprecation")
+    //@SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void testCreateFastestPathFromNodesException() {
         Path.createFastestPathFromNodes(graph,
                 Arrays.asList(new Node[] { nodes[1], nodes[0] }));
     }
 
-    @SuppressWarnings("deprecation")
+    //@SuppressWarnings("deprecation")
     @Test(expected = IllegalArgumentException.class)
     public void testCreateShortestPathFromNodesException() {
         Path.createShortestPathFromNodes(graph,

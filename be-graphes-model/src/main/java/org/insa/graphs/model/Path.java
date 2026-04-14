@@ -25,7 +25,6 @@ public class Path {
      * @return A path that goes through the given list of nodes.
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
-     * @deprecated Need to be implemented.
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
@@ -40,12 +39,16 @@ public class Path {
             }
             
             //La liste des successeurs de node est non vide, on initialise fastest_arc avec le premier arc
-            Arc fastest_arc = node.getSuccessors().get(0);
+            Arc fastest_arc = null;
             
             for (Arc successor : node.getSuccessors()) {
 
                 if (successor.getDestination().equals(nextNode)) {
-                    if (successor.getMinimumTravelTime() < fastest_arc.getMinimumTravelTime()) {
+                    // Si fastest_arc est pas initialisé (== null) on prends le 1er arc valide
+                    // Sinon on garde l'arc le plus rapide
+                    // attention : avec || la seconde condition n'est pas évaluée si la 1ère est vraie
+                    // ce qui est nécessaire ici sinon on pourrait apeller getMinimumTravelTime() sur un arc null
+                    if (fastest_arc == null || successor.getMinimumTravelTime() < fastest_arc.getMinimumTravelTime()) {
                         fastest_arc = successor;
                     }
                 }
@@ -57,8 +60,15 @@ public class Path {
 
             arcs.add(fastest_arc);
         }
-
-        return new Path(graph, arcs);
+        
+        //3 cas : 1) le path contient au moins un arc, 2) le path contient un seul noeud 3) le path est vide
+        if (arcs.size() > 0) {
+            return new Path(graph, arcs);
+        }
+        if (arcs.size() == 0 && nodes.size() > 0) {
+            return new Path(graph, nodes.get(0));
+        }
+        return new Path(graph);
     }
 
     /**
@@ -70,13 +80,51 @@ public class Path {
      * @return A path that goes through the given list of nodes.
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
-     * @deprecated Need to be implemented.
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
-        return new Path(graph, arcs);
+
+        for (int i = 0; i < nodes.size() - 1; i++) {
+            Node node = nodes.get(i);
+            Node nextNode = nodes.get(i + 1);
+
+            if(!node.hasSuccessors()) {
+                throw new IllegalArgumentException("Cannot create path where a node has no successor.");
+            }
+            
+            //La liste des successeurs de node est non vide, on initialise shortest_arc avec le premier arc
+            Arc shortest_arc = null;
+            
+            for (Arc successor : node.getSuccessors()) {
+
+                if (successor.getDestination().equals(nextNode)) {
+                    // Si shortest_arc est pas initialisé (== null) on prends le 1er arc valide
+                    // Sinon on garde l'arc le plus court
+                    // attention : avec || la seconde condition n'est pas évaluée si la 1ère est vraie
+                    // ce qui est nécessaire ici sinon on pourrait apeller getLength() sur un arc null
+                    if (shortest_arc == null || successor.getLength() < shortest_arc.getLength()) {
+                        shortest_arc = successor;
+                    }
+                }
+            }
+            
+            if (shortest_arc == null) {
+                throw new IllegalArgumentException("Cannot create path where two consecutive nodes are not connected.");
+            }
+
+            arcs.add(shortest_arc);
+        }
+
+        //3 cas : 1) le path contient au moins un arc, 2) le path contient un seul noeud 3) le path est vide
+        if (arcs.size() > 0) {
+            return new Path(graph, arcs);
+        }
+        if (arcs.size() == 0 && nodes.size() > 0) {
+            return new Path(graph, nodes.get(0));
+        }
+        return new Path(graph);
+        
     }
 
     /**

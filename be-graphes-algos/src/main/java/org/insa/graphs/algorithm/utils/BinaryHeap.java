@@ -132,9 +132,40 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
         this.percolateUp(index);
     }
 
+    /**
+     * Search the given element index in the array using Binary Heap property.
+     * <p>
+     * <b>Complexity:</b> <i>O(n)</i>
+     * </p>
+     *
+     * @param x Item to search.
+     * @param startIndex the index to begin the search from.
+     * @return Element index or -1 if x is not in the array.
+     */
+    public int indexOf(E x, int startIndex) {
+        //used to replace array.indexOf which is slower
+        
+        if (startIndex < 0 || startIndex >= this.currentSize) {
+            return -1;
+        }
+
+        if (this.array.get(startIndex) == x) {
+            return startIndex;
+        }
+
+        //left (return only if != -1)
+        int i1 = indexOf(x, indexLeft(startIndex));
+        if (i1 != -1) {
+            return i1;
+        }
+
+        //right
+        return indexOf(x, indexLeft(startIndex) + 1);
+    }
+
     @Override
     public void remove(E x) throws ElementNotFoundException {
-        int index = this.array.indexOf(x);
+        int index = indexOf(x, 0);
         if (index == -1 || index >= this.currentSize) {throw new ElementNotFoundException(x);}
         
         E latest = this.array.get(this.currentSize-1);

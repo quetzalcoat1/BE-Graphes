@@ -48,13 +48,8 @@ public class Label implements Comparable<Label> {
         this.pere = pere;
     }
 
-    public double getCost() {
-        return coutRealise;
-    }
-
-
     @Override
     public int compareTo(Label other) {
-        return Double.compare(this.getCost(), other.getCost());
+        return Double.compare(this.getCoutRealise(), other.getCoutRealise());
     }
 }

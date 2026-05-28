@@ -25,6 +25,15 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         // retrieve data from the input problem (getInputData() is inherited from the
         // parent class ShortestPathAlgorithm)
         final ShortestPathData data = getInputData();
+
+        // simple checks to verify the existence of input data
+        if (data == null) {
+            return new ShortestPathSolution(data, Status.INFEASIBLE);
+        }
+        else if (data.getGraph() == null || data.getOrigin() == null || data.getDestination() == null) {
+            return new ShortestPathSolution(data, Status.INFEASIBLE);
+        } 
+
         Graph graph = data.getGraph();
 
         final int nbNodes = graph.size();

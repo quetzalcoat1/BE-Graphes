@@ -15,6 +15,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         super(data);
     }
 
+    public Label initialisation(int i, Graph graph, ShortestPathData data) {
+        return new Label(i);
+    }
+
     @Override
     protected ShortestPathSolution doRun() {
 
@@ -27,7 +31,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
 
         Label[] labels = new Label[nbNodes];
-        for (int i = 0; i < nbNodes; ++i) { labels[i] = new Label(i); }
+        for (int i = 0; i < nbNodes; ++i) { labels[i] = initialisation(i, graph, data); }
 
         BinaryHeap<Label> tasLabel = new BinaryHeap<Label>();
         

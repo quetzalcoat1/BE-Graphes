@@ -18,19 +18,23 @@ public class Label implements Comparable<Label> {
 
     // Getters
     public int getSommetCourant() {
-        return sommetCourant;
+        return this.sommetCourant;
     }
 
     public boolean isMarque() {
-        return marque;
+        return this.marque;
     }
 
     public double getCoutRealise() {
-        return coutRealise;
+        return this.coutRealise;
+    }
+
+    public double getTotalCost() {
+        return getCoutRealise();
     }
 
     public Arc getPere() {
-        return pere;
+        return this.pere;
     }
 
     // Setter marque
@@ -48,8 +52,18 @@ public class Label implements Comparable<Label> {
         this.pere = pere;
     }
 
+    public double getCoutEstime() {
+        return 0;
+    }
+
     @Override
     public int compareTo(Label other) {
-        return Double.compare(this.getCoutRealise(), other.getCoutRealise());
+        int compare = Double.compare(this.getTotalCost(), other.getTotalCost());
+
+        if (compare == 0) {
+            return Double.compare(this.getCoutEstime(), other.getCoutEstime());
+        }
+
+        return compare;
     }
 }

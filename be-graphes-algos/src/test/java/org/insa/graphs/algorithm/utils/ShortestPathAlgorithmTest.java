@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import org.insa.graphs.algorithm.AbstractSolution.Status;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.insa.graphs.algorithm.shortestpath.BellmanFordAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathAlgorithm;
@@ -16,11 +17,13 @@ import org.insa.graphs.algorithm.shortestpath.ShortestPathSolution;
 import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Graph;
 import org.insa.graphs.model.Node;
+import org.insa.graphs.model.Path;
 import org.insa.graphs.model.Point;
 import org.insa.graphs.model.io.BinaryGraphReader;
 import org.insa.graphs.model.io.GraphReader;
 import org.insa.graphs.algorithm.ArcInspector;
 import org.insa.graphs.algorithm.ArcInspectorFactory;
+import org.insa.graphs.algorithm.AbstractInputData.Mode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -164,7 +167,39 @@ public abstract class ShortestPathAlgorithmTest {
         assertEquals(bellmanFordCost, algorithmCost);
     }
 
+    @Test
+    public void testPathIsOptimal() {
 
+        if (!this.solution.isFeasible() || parameters.origin == parameters.destination) {
+            return;
+        }
+
+        double algorithmCost = 0;
+
+        // Calculate algorithmCost and Transform the solution path into a list of nodes
+        List<Node> nodes = new ArrayList<>();
+        Arc lastArc = null;
+        for (Arc arc : this.solution.getPath().getArcs()) {
+            algorithmCost += this.solution.getInputData().getCost(arc);
+            nodes.add(arc.getOrigin());
+            lastArc = arc;
+        }
+        nodes.add(lastArc.getDestination());
+        
+        double pathCost = 0;
+        
+        // Reconstruct optimal path from the list of nodes
+        if (Mode.LENGTH.equals(parameters.arcInspector.getMode())) {
+            Path path = Path.createShortestPathFromNodes(parameters.graph, nodes);
+            pathCost = path.getLength();
+        }
+        else if (Mode.TIME.equals(parameters.arcInspector.getMode())) {
+            Path path = Path.createFastestPathFromNodes(parameters.graph, nodes);
+            pathCost = path.getMinimumTravelTime();
+        }
+        
+        assertEquals(pathCost, algorithmCost, 1e-6);
+    }
 
 
 

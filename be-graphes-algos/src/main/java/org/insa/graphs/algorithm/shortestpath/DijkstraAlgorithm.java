@@ -33,6 +33,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         if (data.getGraph() == null || data.getOrigin() == null || data.getDestination() == null) {
             return new ShortestPathSolution(data, Status.INFEASIBLE);
         }
+        if (data.getOrigin().getId() >= data.getGraph().size() || data.getDestination().getId() >= data.getGraph().size() || data.getOrigin().getId() < 0 || data.getDestination().getId() < 0) {
+            return new ShortestPathSolution(data, Status.INFEASIBLE);
+        }
+        if (data.getOrigin() == data.getDestination()) {
+            return new ShortestPathSolution(data, Status.OPTIMAL);
+        }
+
 
         Graph graph = data.getGraph();
 

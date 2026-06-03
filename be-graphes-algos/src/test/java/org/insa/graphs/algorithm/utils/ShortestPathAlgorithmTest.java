@@ -9,12 +9,14 @@ import org.insa.graphs.algorithm.AbstractSolution.Status;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.insa.graphs.algorithm.shortestpath.BellmanFordAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathData;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathSolution;
-
+import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Graph;
 import org.insa.graphs.model.Node;
+import org.insa.graphs.model.Point;
 import org.insa.graphs.model.io.BinaryGraphReader;
 import org.insa.graphs.model.io.GraphReader;
 import org.insa.graphs.algorithm.ArcInspector;
@@ -78,7 +80,11 @@ public abstract class ShortestPathAlgorithmTest {
         // Origin and destination are the same
         objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(642480), bretagneGraph.get(642480), ArcInspectorFactory.getAllFilters().get(0), Status.OPTIMAL));
 
-
+        // One or both nodes do not exist
+        Node nonExistingNode = new Node(-1, new Point(0, 0));
+        objects.add(new TestParameters(bretagneGraph, nonExistingNode, bretagneGraph.get(642480), ArcInspectorFactory.getAllFilters().get(0), Status.INFEASIBLE));
+        objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(642480), nonExistingNode, ArcInspectorFactory.getAllFilters().get(0), Status.INFEASIBLE));
+        objects.add(new TestParameters(bretagneGraph, nonExistingNode, nonExistingNode, ArcInspectorFactory.getAllFilters().get(0), Status.INFEASIBLE));
 
 
 
@@ -120,12 +126,42 @@ public abstract class ShortestPathAlgorithmTest {
 
     @Test
     public void testOriginEqualsDestination() {
-        if (parameters.origin == parameters.destination) {
+        // Check that if origin and destination are the same and exist in the graph, the solution is feasible and optimal
+        if (parameters.origin == parameters.destination && parameters.origin != null && parameters.destination != null && !(parameters.origin.getId() >= parameters.graph.size() || parameters.destination.getId() >= parameters.graph.size() || parameters.origin.getId() < 0 || parameters.destination.getId() < 0)) {
             assertEquals(true, this.solution.isFeasible());
-            assertEquals(Status.OPTIMAL, this.solution.getStatus());
         }
     }
 
+    @Test
+    public void testExpectedStatus() {
+        assertEquals(parameters.expectedStatus, this.solution.getStatus());
+    }
+
+    @Test
+    public void testComparisonWithBellmanFord() {
+        
+        // Bellman-Ford does not behave the same way as Dijkstra or A* when origin == destination.
+        if (!this.solution.isFeasible() || parameters.origin == parameters.destination) {
+            return;
+        }
+
+        BellmanFordAlgorithm bellmanFord = new BellmanFordAlgorithm(this.solution.getInputData());
+        ShortestPathSolution bellmanFordSolution = bellmanFord.run();
+
+        //compute cost :
+        double algorithmCost = 0;
+        double bellmanFordCost = 0;
+    
+        for (Arc arc : bellmanFordSolution.getPath().getArcs()) {
+            bellmanFordCost += bellmanFordSolution.getInputData().getCost(arc);
+        }
+        
+        for (Arc arc : this.solution.getPath().getArcs()) {
+            algorithmCost += this.solution.getInputData().getCost(arc);
+        }
+
+        assertEquals(bellmanFordCost, algorithmCost);
+    }
 
 
 

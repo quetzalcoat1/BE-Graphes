@@ -70,23 +70,24 @@ public abstract class ShortestPathAlgorithmTest {
 
         Graph emptyGraph = new Graph("", "", new ArrayList<Node>(), null);
         Graph bretagneGraph = getGraph("/C:/Users/natha/Desktop/INSA/3A/BE Graphes/maps/bretagne.mapgr");
-
-        // Empty graph
-        objects.add(new TestParameters(emptyGraph, null, null, null, Status.INFEASIBLE));
-
-        // Origin and destination not connected
-        objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(642480), bretagneGraph.get(619897), ArcInspectorFactory.getAllFilters().get(0), Status.INFEASIBLE));
-
-        // Origin and destination are the same
-        objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(642480), bretagneGraph.get(642480), ArcInspectorFactory.getAllFilters().get(0), Status.OPTIMAL));
-
-        // One or both nodes do not exist
         Node nonExistingNode = new Node(-1, new Point(0, 0));
-        objects.add(new TestParameters(bretagneGraph, nonExistingNode, bretagneGraph.get(642480), ArcInspectorFactory.getAllFilters().get(0), Status.INFEASIBLE));
-        objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(642480), nonExistingNode, ArcInspectorFactory.getAllFilters().get(0), Status.INFEASIBLE));
-        objects.add(new TestParameters(bretagneGraph, nonExistingNode, nonExistingNode, ArcInspectorFactory.getAllFilters().get(0), Status.INFEASIBLE));
 
+        // Test cases for all filters implemented in ArcInspectorFactory
+        for (ArcInspector arcInspector : ArcInspectorFactory.getAllFilters()) {
+            // Empty graph
+            objects.add(new TestParameters(emptyGraph, null, null, null, Status.INFEASIBLE));
 
+            // Origin and destination not connected
+            objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(642480), bretagneGraph.get(619897), arcInspector, Status.INFEASIBLE));
+
+            // Origin and destination are the same
+            objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(642480), bretagneGraph.get(642480), arcInspector, Status.OPTIMAL));
+
+            // One or both nodes do not exist
+            objects.add(new TestParameters(bretagneGraph, nonExistingNode, bretagneGraph.get(642480), arcInspector, Status.INFEASIBLE));
+            objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(642480), nonExistingNode, arcInspector, Status.INFEASIBLE));
+            objects.add(new TestParameters(bretagneGraph, nonExistingNode, nonExistingNode, arcInspector, Status.INFEASIBLE));
+        }
 
         return objects;
     }

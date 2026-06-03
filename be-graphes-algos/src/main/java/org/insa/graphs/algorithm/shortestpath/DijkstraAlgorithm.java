@@ -15,7 +15,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         super(data);
     }
 
-    public Label initialisation(int i, Graph graph, ShortestPathData data) {
+    public Label initialisationLabel(int i, Graph graph, ShortestPathData data) {
         return new Label(i);
     }
 
@@ -30,9 +30,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         if (data == null) {
             return new ShortestPathSolution(data, Status.INFEASIBLE);
         }
-        else if (data.getGraph() == null || data.getOrigin() == null || data.getDestination() == null) {
+        if (data.getGraph() == null || data.getOrigin() == null || data.getDestination() == null) {
             return new ShortestPathSolution(data, Status.INFEASIBLE);
-        } 
+        }
 
         Graph graph = data.getGraph();
 
@@ -40,7 +40,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
 
         Label[] labels = new Label[nbNodes];
-        for (int i = 0; i < nbNodes; ++i) { labels[i] = initialisation(i, graph, data); }
+        for (int i = 0; i < nbNodes; ++i) { labels[i] = initialisationLabel(i, graph, data); }
 
         BinaryHeap<Label> tasLabel = new BinaryHeap<Label>();
         

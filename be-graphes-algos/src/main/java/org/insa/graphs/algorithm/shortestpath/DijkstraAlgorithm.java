@@ -22,6 +22,11 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     @Override
     protected ShortestPathSolution doRun() {
 
+        // To test performance :
+        int nbMarque = 0;
+        int maxTas = 0;
+        int nbInsere = 0;
+
         // retrieve data from the input problem (getInputData() is inherited from the
         // parent class ShortestPathAlgorithm)
         final ShortestPathData data = getInputData();
@@ -53,6 +58,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         labels[data.getOrigin().getId()].setCoutRealise(0);
         tasLabel.insert(labels[data.getOrigin().getId()]);
+        nbInsere++;
+        if (tasLabel.size() > maxTas) {
+            maxTas = tasLabel.size();
+        }
 
         // Notify observers about the first event (origin processed).
         notifyOriginProcessed(data.getOrigin());
@@ -63,6 +72,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             // Choose label with minimum cost and remove it from the heap
             int idSommetCourant = tasLabel.deleteMin().getSommetCourant();
             labels[idSommetCourant].setMarque(true);
+            nbMarque++;
             notifyNodeMarked(graph.get(idSommetCourant));
 
             if (idSommetCourant == data.getDestination().getId()) {
@@ -99,6 +109,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                     labels[idSuccesseur].setPere(arc);
 
                     tasLabel.insert(labels[idSuccesseur]);
+                    nbInsere++;
+                    if (tasLabel.size() > maxTas) {
+                        maxTas = tasLabel.size();
+                    }
                     
                 }
             }
@@ -131,6 +145,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
             solution = new ShortestPathSolution(data, Status.OPTIMAL, path);
         }
+
+        System.err.println(". ");
+        System.err.println(".. ");
+        System.err.println(" ");
+        System.err.println("nb marqués : " + nbMarque);
+        System.err.println("nb insérés : " + nbInsere);
+        System.err.println("max tas : " + maxTas);
 
         return solution;
     }

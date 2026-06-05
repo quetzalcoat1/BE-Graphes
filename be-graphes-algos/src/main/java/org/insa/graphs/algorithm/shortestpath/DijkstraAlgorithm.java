@@ -37,7 +37,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             return new ShortestPathSolution(data, Status.INFEASIBLE);
         }
         if (data.getOrigin() == data.getDestination()) {
-            return new ShortestPathSolution(data, Status.OPTIMAL);
+            return new ShortestPathSolution(data, Status.OPTIMAL, new Path(data.getGraph()));
         }
 
 

@@ -72,7 +72,8 @@ public abstract class ShortestPathAlgorithmTest {
         Collection<Object> objects = new ArrayList<>();
 
         Graph emptyGraph = new Graph("", "", new ArrayList<Node>(), null);
-        Graph bretagneGraph = getGraph("/C:/Users/natha/Desktop/INSA/3A/BE Graphes/maps/bretagne.mapgr");
+        //Graph bretagneGraph = getGraph("/C:/Users/natha/Desktop/INSA/3A/BE Graphes/maps/bretagne.mapgr");
+        Graph bretagneGraph = getGraph("/mnt/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/bretagne.mapgr");
         Node nonExistingNode = new Node(-1, new Point(0, 0));
 
         // Test cases for all filters implemented in ArcInspectorFactory
@@ -90,6 +91,15 @@ public abstract class ShortestPathAlgorithmTest {
             objects.add(new TestParameters(bretagneGraph, nonExistingNode, bretagneGraph.get(642480), arcInspector, Status.INFEASIBLE));
             objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(642480), nonExistingNode, arcInspector, Status.INFEASIBLE));
             objects.add(new TestParameters(bretagneGraph, nonExistingNode, nonExistingNode, arcInspector, Status.INFEASIBLE));
+
+            // Short rural path
+            objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(326847), bretagneGraph.get(355023), arcInspector, Status.OPTIMAL));
+
+            // Short urban path
+            objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(1866), bretagneGraph.get(32098), arcInspector, Status.OPTIMAL));
+
+            // Long path
+            objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(639854), bretagneGraph.get(347688), arcInspector, Status.OPTIMAL));
         }
 
         return objects;
@@ -129,6 +139,13 @@ public abstract class ShortestPathAlgorithmTest {
     }
 
     @Test
+    public void testIsValid() {
+        if (this.solution.isFeasible()) {
+            assertEquals(true, this.solution.getPath().isValid());
+        }
+    }
+
+    @Test
     public void testOriginEqualsDestination() {
         // Check that if origin and destination are the same and exist in the graph, the solution is feasible and optimal
         if (parameters.origin == parameters.destination && parameters.origin != null && parameters.destination != null && !(parameters.origin.getId() >= parameters.graph.size() || parameters.destination.getId() >= parameters.graph.size() || parameters.origin.getId() < 0 || parameters.destination.getId() < 0)) {
@@ -143,6 +160,11 @@ public abstract class ShortestPathAlgorithmTest {
 
     @Test
     public void testComparisonWithBellmanFord() {
+
+        // Comparison with Bellman-Ford is too long for huge graph
+        if (parameters.graph.size() > 1000) {
+            return;
+        } 
         
         // Bellman-Ford does not behave the same way as Dijkstra or A* when origin == destination.
         if (!this.solution.isFeasible() || parameters.origin == parameters.destination) {

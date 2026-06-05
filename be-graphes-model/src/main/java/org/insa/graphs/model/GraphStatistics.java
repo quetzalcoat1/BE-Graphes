@@ -173,7 +173,7 @@ public class GraphStatistics {
      * @return true if this graph has a maximum speed limit, false otherwise.
      */
     public boolean hasMaximumSpeed() {
-        return this.maximumLength != NO_MAXIMUM_SPEED;
+        return this.maximumSpeed != NO_MAXIMUM_SPEED;
     }
 
     /**

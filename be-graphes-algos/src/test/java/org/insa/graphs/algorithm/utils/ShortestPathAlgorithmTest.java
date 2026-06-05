@@ -1,7 +1,6 @@
 package org.insa.graphs.algorithm.utils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -17,6 +16,7 @@ import org.insa.graphs.algorithm.shortestpath.ShortestPathData;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathSolution;
 import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Graph;
+import org.insa.graphs.model.GraphStatistics;
 import org.insa.graphs.model.Node;
 import org.insa.graphs.model.Path;
 import org.insa.graphs.model.Point;
@@ -72,9 +72,18 @@ public abstract class ShortestPathAlgorithmTest {
     public static Collection<Object> data() throws Exception {
         Collection<Object> objects = new ArrayList<>();
 
-        Graph emptyGraph = new Graph("", "", new ArrayList<Node>(), null);
-        //Graph bretagneGraph = getGraph("/C:/Users/natha/Desktop/INSA/3A/BE Graphes/maps/bretagne.mapgr");
-        Graph bretagneGraph = getGraph("/mnt/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/bretagne.mapgr");
+        GraphStatistics graphStatistics = new GraphStatistics(null, 0, 0,10, 0.0f);
+
+        Graph emptyGraph = new Graph("", "", new ArrayList<Node>(), graphStatistics);
+
+        // Version INSA :
+        //Graph bretagneGraph = getGraph("/mnt/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/bretagne.mapgr");
+        //Graph toulouseGraph = getGraph("/mnt/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr");
+
+        // Version personnelle :
+        Graph bretagneGraph = getGraph("/C:/Users/natha/Desktop/INSA/3A/BE Graphes/maps/bretagne.mapgr");
+        Graph toulouseGraph = getGraph("/C:/Users/natha/Desktop/INSA/3A/BE Graphes/maps/toulouse.mapgr");
+
         Node nonExistingNode = new Node(-1, new Point(0, 0));
 
         // Test cases for all filters implemented in ArcInspectorFactory
@@ -99,8 +108,11 @@ public abstract class ShortestPathAlgorithmTest {
             // Short urban path
             objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(1866), bretagneGraph.get(32098), arcInspector, Status.OPTIMAL));
 
-            // Long path
+            // Long path (>300 km)
             objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(639854), bretagneGraph.get(347688), arcInspector, Status.OPTIMAL));
+
+            // Curved path
+            objects.add(new TestParameters(toulouseGraph, toulouseGraph.get(21210), toulouseGraph.get(1012), arcInspector, Status.OPTIMAL));
         }
 
         return objects;
@@ -222,15 +234,59 @@ public abstract class ShortestPathAlgorithmTest {
         if (Mode.LENGTH.equals(parameters.arcInspector.getMode())) {
             Path path = Path.createShortestPathFromNodes(parameters.graph, nodes);
             pathCost = path.getLength();
+
+            assertEquals(this.solution.getPath().getArcs().size(), path.getArcs().size());
         }
         else if (Mode.TIME.equals(parameters.arcInspector.getMode())) {
             Path path = Path.createFastestPathFromNodes(parameters.graph, nodes);
             pathCost = path.getMinimumTravelTime();
+
+            assertEquals(this.solution.getPath().getArcs().size(), path.getArcs().size());
         }
         
         System.err.println("mode : " + parameters.arcInspector.getMode());
         assertEquals(pathCost, algorithmCost, 1e-6);
     }
+
+
+
+
+
+    /*
+    @Test
+    public void testPerformanceDijkstra() {
+
+        ShortestPathData data =
+            new ShortestPathData(graph, origin, destination, inspector);
+
+        long start = System.nanoTime();
+
+        ShortestPathSolution solution =
+            new DijkstraAlgorithm(data).run();
+
+        long end = System.nanoTime();
+
+        double timeMs = (end - start) / 1e6;
+
+        //System.out.println("Temps Dijkstra: " + timeMs);
+        //System.out.println("Labels marqués: " + solution.getNbLabelsMarked());
+        //System.out.println("Labels atteints: " + solution.getNbLabelsReached());
+
+
+
+        Graph bretagneGraph = getGraph("/C:/Users/natha/Desktop/INSA/3A/BE Graphes/maps/bretagne.mapgr");
+
+
+        //for (ArcInspector arcInspector : ArcInspectorFactory.getAllFilters()) {
+          
+            objects.add(new TestParameters(bretagneGraph, bretagneGraph.get(642480), bretagneGraph.get(619897), arcInspector, Status.INFEASIBLE));
+
+
+
+    }*/
+
+
+
 
 
 
